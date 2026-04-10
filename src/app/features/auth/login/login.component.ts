@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   loading = false;
   submitted = false;
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -38,11 +39,14 @@ export class LoginComponent implements OnInit {
     return this.loginForm.controls;
   }
 
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
   onSubmit(): void {
     this.submitted = true;
 
     if (this.loginForm.invalid) {
-      // Marcar todos os campos como tocados para mostrar erros
       Object.keys(this.loginForm.controls).forEach(key => {
         this.loginForm.get(key)?.markAsTouched();
       });
@@ -53,7 +57,7 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
-        this.toastr.success('Login realizado com sucesso!', 'Bem-vindo!');
+        this.toastr.success('Login realizado com sucesso!');
         this.router.navigate(['/dashboard']);
       },
       error: (error) => {

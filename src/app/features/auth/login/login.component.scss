@@ -77,6 +77,50 @@
             }
         }
 
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+
+            input {
+                width: 100%;
+                padding: 12px 45px 12px 15px;
+                border: 2px solid #e1e5e9;
+                border-radius: 10px;
+                font-size: 14px;
+                transition: all 0.3s ease;
+                outline: none;
+
+                &:focus {
+                    border-color: #667eea;
+                    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                }
+
+                &.ng-invalid.ng-touched {
+                    border-color: #f56565;
+                }
+            }
+
+            .toggle-password {
+                position: absolute;
+                right: 12px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: #999;
+                font-size: 16px;
+                padding: 5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: #667eea;
+                }
+            }
+        }
+
         .error-message {
             color: #f56565;
             font-size: 12px;
