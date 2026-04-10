@@ -15,6 +15,9 @@ export class RegisterComponent implements OnInit {
   loading = false;
   submitted = false;
 
+  showPassword = false;
+  showConfirmPassword = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -22,7 +25,6 @@ export class RegisterComponent implements OnInit {
     private toastr: ToastrService
   ) {
     this.registerForm = this.fb.group({
-      nome: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(6)]],
       confirmarSenha: ['', [Validators.required]]
@@ -39,6 +41,14 @@ export class RegisterComponent implements OnInit {
 
   get f() {
     return this.registerForm.controls;
+  }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPassword(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -70,7 +80,10 @@ export class RegisterComponent implements OnInit {
     this.authService.register(registerData).subscribe({
       next: () => {
         this.toastr.success('Conta criada com sucesso! Faça login para continuar.', 'Sucesso!');
-        this.router.navigate(['/login']);
+
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 2000);
       },
       error: (error: any) => {
         let errorMessage = 'Erro ao criar conta';

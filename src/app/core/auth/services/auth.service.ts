@@ -20,10 +20,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router
-  ) {
-    console.log('AuthService inicializado');
-    console.log('API URL:', this.apiUrl);
-  }
+  ) { }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     console.log('Enviando login:', credentials);
@@ -40,13 +37,16 @@ export class AuthService {
       );
   }
 
-  register(data: RegisterRequest): Observable<any> {
+  register(data: LoginRequest): Observable<LoginResponse> {
     console.log('Enviando registro:', data);
 
-    return this.http.post(`${this.apiUrl}/register`, data)
+    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, data)
       .pipe(
         tap(response => {
-          console.log('Registro realizado com sucesso:', response);
+          console.log('Resposta do servidor:', response);
+          if (response && response.token) {
+            this.handleAuthResponse(response);
+          }
         }),
         catchError(this.handleError)
       );
@@ -91,6 +91,30 @@ export class AuthService {
         return throwError(() => error);
       })
     );
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    console.log('Enviando email:', email);
+
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email })
+      .pipe(
+        tap(response => {
+          console.log('Email enviado com sucesso:', response);
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  resetPassword(token: string, password: string): Observable<any> {
+    console.log('Enviando redefinição de senha');
+
+    return this.http.post(`${this.apiUrl}/reset-password`, { token, password })
+      .pipe(
+        tap(response => {
+          console.log('Senha redefinida com sucesso:', response);
+        }),
+        catchError(this.handleError)
+      );
   }
 
   private handleAuthResponse(response: LoginResponse): void {
