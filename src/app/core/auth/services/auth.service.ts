@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, finalize, Observable, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { LoginRequest, LoginResponse } from '../../models/login-request';
+import { RegisterRequest } from '../../models/register-request';
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,18 @@ export class AuthService {
       );
   }
 
+  register(data: RegisterRequest): Observable<any> {
+    console.log('Enviando registro:', data);
+
+    return this.http.post(`${this.apiUrl}/register`, data)
+      .pipe(
+        tap(response => {
+          console.log('Registro realizado com sucesso:', response);
+        }),
+        catchError(this.handleError)
+      );
+  }
+
   logout(): void {
     console.log('Realizando logout');
     localStorage.removeItem(this.tokenKey);
@@ -62,7 +75,6 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     const hasToken = this.hasToken();
-    console.log('Usuário autenticado?', hasToken);
     return hasToken;
   }
 

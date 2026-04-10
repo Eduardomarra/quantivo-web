@@ -1,0 +1,61 @@
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <img src="assets/images/logo.png" alt="Logo Quantivo" class="logo">
+            <h2>Criar Conta</h2>
+            <p>Preencha os dados para se registrar</p>
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+
+            <div class="form-group">
+                <label for="email">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                <input type="email" id="email" formControlName="email" placeholder="seu@email.com"
+                    [class.is-invalid]="submitted && f['email'].invalid">
+                <div *ngIf="submitted && f['email'].invalid" class="error-message">
+                    <span *ngIf="f['email'].errors?.['required']">Email é obrigatório</span>
+                    <span *ngIf="f['email'].errors?.['email']">Email inválido</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="senha">
+                    <i class="fas fa-lock"></i> Senha
+                </label>
+                <input type="password" id="senha" formControlName="senha" placeholder="Mínimo 6 caracteres"
+                    [class.is-invalid]="submitted && f['senha'].invalid">
+                <div *ngIf="submitted && f['senha'].invalid" class="error-message">
+                    <span *ngIf="f['senha'].errors?.['required']">Senha é obrigatória</span>
+                    <span *ngIf="f['senha'].errors?.['minlength']">Senha deve ter no mínimo 6 caracteres</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmarSenha">
+                    <i class="fas fa-lock"></i> Confirmar Senha
+                </label>
+                <input type="password" id="confirmarSenha" formControlName="confirmarSenha"
+                    placeholder="Repita sua senha" [class.is-invalid]="submitted && f['confirmarSenha'].invalid">
+                <div *ngIf="submitted && f['confirmarSenha'].invalid" class="error-message">
+                    <span *ngIf="f['confirmarSenha'].errors?.['required']">Confirmação de senha é obrigatória</span>
+                    <span *ngIf="f['confirmarSenha'].errors?.['passwordMismatch']">As senhas não coincidem</span>
+                </div>
+            </div>
+
+            <button type="submit" [disabled]="loading" class="btn-register">
+                <span *ngIf="!loading">
+                    <i class="fas fa-user-plus"></i> Criar Conta
+                </span>
+                <span *ngIf="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Criando...
+                </span>
+            </button>
+        </form>
+
+        <div class="register-footer">
+            <p>Já tem uma conta? <a routerLink="/login">Faça login</a></p>
+        </div>
+    </div>
+</div>
