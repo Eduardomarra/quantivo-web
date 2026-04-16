@@ -60,36 +60,9 @@
       </div>
     </header>
 
-    <!-- Content Stage -->
+    <!-- Content Stage via Router -->
     <div class="dashboard-content">
-      <section class="content-header">
-        <div class="titles">
-          <span class="subtitle">VISÃO GERAL</span>
-          <h3>Meus acessos</h3>
-        </div>
-        <!-- <div class="actions">
-          <button class="btn-outline">
-            <i class="fas fa-file-export"></i> Exportar
-          </button>
-          <button class="btn-primary">
-            <i class="fas fa-plus"></i> Nova Lista
-          </button>
-        </div> -->
-      </section>
-
-      <!-- Grid Content -->
-      <div class="cards-grid">
-        <div class="dashboard-card">
-          <div class="card-icon">
-            <i class="fas fa-shopping-cart"></i>
-          </div>
-          <h4>Quantivo</h4>
-          <p>Lista de compras Mensal</p>
-          <button class="btn-primary access-btn">
-            Acessar <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-      </div>
+      <router-outlet></router-outlet>
     </div>
 
     <footer class="dashboard-footer">

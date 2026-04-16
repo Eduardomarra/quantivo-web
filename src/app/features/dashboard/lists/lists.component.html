@@ -1,0 +1,148 @@
+<section class="content-header">
+  <div class="titles">
+    <span class="subtitle">Listas</span>
+    <h3>Listas de Compras</h3>
+  </div>
+  <div class="actions">
+    <button class="btn-primary">
+      <i class="fas fa-plus"></i> Nova Lista
+    </button>
+  </div>
+</section>
+
+<div class="lists-container">
+
+  <p class="section-desc">Gerencie e acompanhe o histórico de compras de suas listas de compras.</p>
+
+  <!-- 2024 Accordion -->
+  <details class="list-accordion" open>
+    <summary>
+      <div class="accordion-head">
+        <h3>2024</h3>
+        <span class="badge badge-current">Ano atual</span>
+      </div>
+      <i class="fas fa-chevron-down expand-icon"></i>
+    </summary>
+
+    <div class="accordion-body">
+
+      <!-- Month: Janeiro -->
+      <div class="month-group">
+        <div class="month-title">
+          <div class="dot dot-secondary"></div>
+          <h4>Janeiro</h4>
+        </div>
+
+        <div class="list-item">
+          <div class="item-icon bg-primary-light text-primary">
+            <i class="fas fa-shopping-bag"></i>
+          </div>
+          <div class="item-details">
+            <h5>Compras Mensais - Supermercado</h5>
+            <p>Jan 12, 2024 • ID: QNT-4421</p>
+          </div>
+          <div class="item-stats">
+            <div class="stat">
+              <span>Items</span>
+              <p>15 itens</p>
+            </div>
+            <div class="stat">
+              <span>Amount</span>
+              <p>R$ 450,00</p>
+            </div>
+            <div class="stat">
+              <span>Status</span>
+              <div class="status-badge status-success">Concluído</div>
+            </div>
+          </div>
+          <button class="btn-outline access-btn">Acessar</button>
+        </div>
+      </div>
+
+      <!-- Month: Fevereiro -->
+      <div class="month-group">
+        <div class="month-title">
+          <div class="dot dot-primary"></div>
+          <h4>Fevereiro</h4>
+        </div>
+
+        <div class="list-item blocked">
+          <div class="item-icon bg-gray text-gray">
+            <i class="far fa-calendar-alt"></i>
+          </div>
+          <div class="item-details">
+            <h5>Planejamento Manutenção Trimestral</h5>
+            <p>Scheduled: Feb 02, 2024</p>
+          </div>
+          <div class="item-stats">
+            <div class="stat">
+              <span>Items</span>
+              <p>--</p>
+            </div>
+            <div class="stat">
+              <span>Amount</span>
+              <p>--</p>
+            </div>
+            <div class="stat">
+              <span>Status</span>
+              <div class="status-badge status-scheduled">Agendado</div>
+            </div>
+          </div>
+          <button class="btn-outline access-btn disabled" disabled>Bloqueado</button>
+        </div>
+      </div>
+
+    </div>
+  </details>
+
+  <!-- 2023 Accordion -->
+  <details class="list-accordion">
+    <summary>
+      <div class="accordion-head">
+        <h3 class="archived-text">2023</h3>
+        <span class="badge badge-archived">Archived</span>
+      </div>
+      <i class="fas fa-chevron-down expand-icon"></i>
+    </summary>
+
+    <div class="accordion-body">
+      <div class="month-group">
+        <div class="month-title">
+          <div class="dot dot-archived"></div>
+          <h4 class="archived-text">Dezembro</h4>
+        </div>
+
+        <div class="list-item archived-item">
+          <div class="item-icon bg-gray text-gray">
+            <i class="fas fa-box"></i>
+          </div>
+          <div class="item-details">
+            <h5>Relatório Final de Ano - Operações</h5>
+            <p>Dec 28, 2023 • ID: QNT-3980</p>
+          </div>
+          <div class="item-stats">
+            <div class="stat">
+              <span>Items</span>
+              <p>24 itens</p>
+            </div>
+            <div class="stat">
+              <span>Amount</span>
+              <p>R$ 5.120,00</p>
+            </div>
+            <div class="stat">
+              <span>Status</span>
+              <div class="status-badge status-archived">Finalizado</div>
+            </div>
+          </div>
+          <button class="btn-outline access-btn">Ver</button>
+        </div>
+      </div>
+
+      <div class="view-all">
+        <button class="link-btn">Ver histórico completo de 2023 <i class="fas fa-arrow-right"></i></button>
+      </div>
+
+    </div>
+  </details>
+
+</div>
