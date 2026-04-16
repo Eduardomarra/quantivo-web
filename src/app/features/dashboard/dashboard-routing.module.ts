@@ -4,6 +4,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 
 import { OverviewComponent } from './overview/overview.component';
 import { ListsComponent } from './lists/lists.component';
+import { ListDetailsComponent } from './list-details/list-details.component';
 
 const routes: Routes = [
   {
@@ -11,7 +12,8 @@ const routes: Routes = [
     component: DashboardComponent,
     children: [
       { path: '', component: OverviewComponent },
-      { path: 'listas', component: ListsComponent }
+      { path: 'listas', component: ListsComponent },
+      { path: 'listas/:id', component: ListDetailsComponent }
     ]
   }
 ];
