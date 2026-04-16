@@ -1,5 +1,6 @@
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,9 +11,11 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 export class DashboardComponent implements OnInit {
 
   showHelpPopup = false;
+  showMenuLists = false;
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -28,6 +31,10 @@ export class DashboardComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  isListasRoute(): boolean {
+    return this.router.url.includes('/dashboard/listas');
   }
 
 }

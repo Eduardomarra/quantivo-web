@@ -278,3 +278,24 @@
     }
   }
 }
+
+.loading-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #94a3b8;
+
+  i {
+    font-size: 40px;
+    margin-bottom: 15px;
+    color: #cbd5e1;
+  }
+
+  p {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0;
+  }
+}
