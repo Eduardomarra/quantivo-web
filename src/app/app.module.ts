@@ -9,6 +9,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './core/auth/interceptors/auth.interceptor';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthModule } from './features/auth/auth.module';
+import { DashboardComponent } from './features/dashboard/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [

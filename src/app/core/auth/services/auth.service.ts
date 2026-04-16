@@ -2,9 +2,9 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, finalize, Observable, tap, throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { LoginRequest, LoginResponse } from '../../models/login-request';
-import { RegisterRequest } from '../../models/register-request';
 
 @Injectable({
   providedIn: 'root'
@@ -23,37 +23,50 @@ export class AuthService {
   ) { }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    console.log('Enviando login:', credentials);
-
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials)
+    return this.http.post<any>(`${this.apiUrl}/login`, credentials, { observe: 'response' })
       .pipe(
         tap(response => {
-          console.log('Resposta do servidor:', response);
-          if (response && response.token) {
-            this.handleAuthResponse(response);
+          const body = response.body;
+          const authHeader = response.headers.get('Authorization');
+
+          if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.substring(7);
+            if (body) {
+              body.token = token; // Anexamos ao corpo para compatibilidade com o resto do sistema
+            }
+            this.handleAuthResponse(body);
+          } else if (body && body.token) {
+            this.handleAuthResponse(body);
           }
         }),
+        map(response => response.body as LoginResponse),
         catchError(this.handleError)
       );
   }
 
   register(data: LoginRequest): Observable<LoginResponse> {
-    console.log('Enviando registro:', data);
-
-    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, data)
+    return this.http.post<any>(`${this.apiUrl}/register`, data, { observe: 'response' })
       .pipe(
         tap(response => {
-          console.log('Resposta do servidor:', response);
-          if (response && response.token) {
-            this.handleAuthResponse(response);
+          const body = response.body;
+          const authHeader = response.headers.get('Authorization');
+
+          if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.substring(7);
+            if (body) {
+              body.token = token;
+            }
+            this.handleAuthResponse(body);
+          } else if (body && body.token) {
+            this.handleAuthResponse(body);
           }
         }),
+        map(response => response.body as LoginResponse),
         catchError(this.handleError)
       );
   }
 
   logout(): void {
-    console.log('Realizando logout');
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
     this.authSubject.next(false);
@@ -62,9 +75,6 @@ export class AuthService {
 
   getToken(): string | null {
     const token = localStorage.getItem(this.tokenKey);
-    if (token) {
-      console.log('Token obtido:', `${token.substring(0, 20)}...`);
-    }
     return token;
   }
 
@@ -86,7 +96,6 @@ export class AuthService {
 
     return this.http.get(`${this.apiUrl}/verify`).pipe(
       catchError((error) => {
-        console.error('Token inválido:', error);
         this.logout();
         return throwError(() => error);
       })
@@ -94,12 +103,10 @@ export class AuthService {
   }
 
   forgotPassword(email: string): Observable<any> {
-    console.log('Enviando email:', email);
 
     return this.http.post(`${this.apiUrl}/forgot-password`, { email })
       .pipe(
         tap(response => {
-          console.log('Email enviado com sucesso:', response);
         }),
         catchError(this.handleError)
       );
@@ -110,25 +117,20 @@ export class AuthService {
   }
 
   resetPassword(token: string, password: string, confirmPassword: string): Observable<any> {
-    console.log('Enviando redefinição de senha');
 
     return this.http.post(`${this.apiUrl}/save-password`, { token, newPassword: password, confirmPassword })
       .pipe(
         tap(response => {
-          console.log('Senha redefinida com sucesso:', response);
         }),
         catchError(this.handleError)
       );
   }
 
   private handleAuthResponse(response: LoginResponse): void {
-    console.log('Salvando dados do usuário:', response);
     if (response.token) {
       localStorage.setItem(this.tokenKey, response.token);
       localStorage.setItem(this.userKey, JSON.stringify(response));
       this.authSubject.next(true);
-      console.log('✅ Token salvo com sucesso!');
-      console.log('Token:', `${response.token.substring(0, 30)}...`);
     }
   }
 
@@ -137,7 +139,6 @@ export class AuthService {
   }
 
   private handleError(error: any): Observable<never> {
-    console.error('Erro no auth service:', error);
     let errorMessage = 'Erro na autenticação';
 
     if (error.status === 401) {

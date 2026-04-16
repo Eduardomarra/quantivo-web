@@ -1,0 +1,125 @@
+<div class="dashboard-wrapper">
+  <!-- SideNavBar -->
+  <aside class="dashboard-sidebar">
+    <div class="sidebar-header">
+      <img src="assets/images/logo.png" alt="Logo Quantivo" class="logo" onerror="this.style.display='none'">
+      <div class="brand">
+        <h2>Quantivo</h2>
+        <p>Precision Analytics</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active" routerLink="/dashboard">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+      <!-- <a class="nav-item">
+        <i class="fas fa-chart-bar"></i>
+        <span>Analytics</span>
+      </a>
+      <a class="nav-item">
+        <i class="fas fa-file-alt"></i>
+        <span>Relatórios</span>
+      </a>
+      <a class="nav-item">
+        <i class="fas fa-cog"></i>
+        <span>Configurações</span>
+      </a> -->
+    </nav>
+
+    <div class="sidebar-footer">
+      <a class="nav-item" (click)="openHelp()">
+        <i class="fas fa-question-circle"></i>
+        <span>Ajuda</span>
+      </a>
+      <a class="nav-item" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Sair</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="dashboard-main">
+    <!-- TopAppBar -->
+    <header class="dashboard-header">
+      <h2>Dashboard</h2>
+
+      <div class="header-actions">
+        <!-- <button class="icon-btn notification-btn">
+          <i class="fas fa-bell"></i>
+          <span class="badge"></span>
+        </button>
+        <button class="icon-btn">
+          <i class="fas fa-cog"></i>
+        </button>
+        <div class="user-profile">
+          <i class="fas fa-user-circle"></i>
+        </div> -->
+      </div>
+    </header>
+
+    <!-- Content Stage -->
+    <div class="dashboard-content">
+      <section class="content-header">
+        <div class="titles">
+          <span class="subtitle">VISÃO GERAL</span>
+          <h3>Meus acessos</h3>
+        </div>
+        <!-- <div class="actions">
+          <button class="btn-outline">
+            <i class="fas fa-file-export"></i> Exportar
+          </button>
+          <button class="btn-primary">
+            <i class="fas fa-plus"></i> Nova Lista
+          </button>
+        </div> -->
+      </section>
+
+      <!-- Grid Content -->
+      <div class="cards-grid">
+        <div class="dashboard-card">
+          <div class="card-icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <h4>Quantivo</h4>
+          <p>Lista de compras Mensal</p>
+          <button class="btn-primary access-btn">
+            Acessar <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="dashboard-footer">
+      <p>© 2024 QUANTIVO ANALYTICS INC.</p>
+    </footer>
+  </main>
+</div>
+
+<!-- Modal Ajuda -->
+<div class="modal-overlay" *ngIf="showHelpPopup" (click)="closeHelp()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Central de Ajuda</h3>
+      <button class="close-btn" (click)="closeHelp()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p>Bem-vindo à área de relatórios e análises do Quantivo!</p>
+      <p>Atualmente, o sistema permite que você cadastre listas, insira ativos ou mercadorias e acompanhe métricas
+        exclusivas do fluxo de sua conta.</p>
+      <br>
+      <h4>Dúvidas Comuns:</h4>
+      <ul>
+        <li><strong>Como alterar dados?</strong> Visite a aba Configurações pelo menu lateral.</li>
+        <li><strong>Exportar Histórico:</strong> No painel de Analytics você pode salvar o gráfico em PDF.</li>
+      </ul>
+      <p style="margin-top: 15px; color: #666; font-size: 13px;">Se o seu problema persistir, entre em contato com nosso
+        suporte especializado através do e-mail: suporte&#64;quantivo.com</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="closeHelp()">Entendi</button>
+    </div>
+  </div>
+</div>
