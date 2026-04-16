@@ -105,10 +105,14 @@ export class AuthService {
       );
   }
 
-  resetPassword(token: string, password: string): Observable<any> {
+  validateResetToken(token: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/validate-token`, { params: { token } });
+  }
+
+  resetPassword(token: string, password: string, confirmPassword: string): Observable<any> {
     console.log('Enviando redefinição de senha');
 
-    return this.http.post(`${this.apiUrl}/reset-password`, { token, password })
+    return this.http.post(`${this.apiUrl}/save-password`, { token, newPassword: password, confirmPassword })
       .pipe(
         tap(response => {
           console.log('Senha redefinida com sucesso:', response);

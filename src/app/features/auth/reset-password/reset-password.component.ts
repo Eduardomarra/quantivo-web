@@ -33,12 +33,24 @@ export class ResetPasswordComponent implements OnInit {
     }, { validators: this.passwordMatchValidator });
   }
 
+  tokenValidating = true;
+
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.token = params['token'] || '';
       if (!this.token) {
         this.toastr.error('Token de recuperação não encontrado.', 'Erro');
         this.router.navigate(['/forgot-password']);
+      } else {
+        this.authService.validateResetToken(this.token).subscribe({
+          next: () => {
+             this.tokenValidating = false;
+          },
+          error: () => {
+             this.toastr.error('Link de redefinição inválido ou já utilizado.', 'Erro');
+             this.router.navigate(['/forgot-password']);
+          }
+        });
       }
     });
   }
@@ -79,7 +91,7 @@ export class ResetPasswordComponent implements OnInit {
 
     this.loading = true;
 
-    this.authService.resetPassword(this.token, this.resetForm.value.password).subscribe({
+    this.authService.resetPassword(this.token, this.resetForm.value.password, this.resetForm.value.confirmPassword).subscribe({
       next: () => {
         this.resetSuccess = true;
         this.toastr.success('Senha redefinida com sucesso!', 'Sucesso!');
