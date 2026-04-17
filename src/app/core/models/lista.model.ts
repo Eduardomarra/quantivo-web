@@ -11,6 +11,7 @@ export interface ListaMensalTO {
   usuarioId: string;
   mes: number;
   ano: number;
+  descricao: string;
   dataCriacao?: string;
   status?: 'PENDENTE' | 'AGENDADO' | 'CONCLUIDO' | 'CANCELADO';
   itens?: ItemListaTO[];
@@ -20,6 +21,7 @@ export interface ListaMensalTO {
 
 export interface CriarListaMensalTO {
   usuarioId: string;
+  descricao: string;
 }
 
 export interface AdicionarItemTO {

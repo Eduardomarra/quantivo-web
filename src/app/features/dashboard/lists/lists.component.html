@@ -4,7 +4,7 @@
     <h3>Listas de Compras</h3>
   </div>
   <div class="actions">
-    <button class="btn-primary">
+    <button class="btn-primary" (click)="novaLista()">
       <i class="fas fa-plus"></i> Nova Lista
     </button>
   </div>
@@ -27,16 +27,12 @@
   </div>
 
   <!-- Dynamic Year Accordions -->
-  <details
-    *ngFor="let grupo of listasAgrupadas; let first = first"
-    class="list-accordion"
+  <details *ngFor="let grupo of listasAgrupadas; let first = first" class="list-accordion"
     [attr.open]="first ? '' : null">
     <summary>
       <div class="accordion-head">
         <h3 [class.archived-text]="!grupo.anoAtual">{{ grupo.ano }}</h3>
-        <span
-          class="badge"
-          [ngClass]="grupo.anoAtual ? 'badge-current' : 'badge-archived'">
+        <span class="badge" [ngClass]="grupo.anoAtual ? 'badge-current' : 'badge-archived'">
           {{ grupo.anoAtual ? 'Ano atual' : 'Archived' }}
         </span>
       </div>
@@ -45,19 +41,18 @@
 
     <div class="accordion-body">
 
-      <div class="month-group" *ngFor="let lista of grupo.listas">
+      <div class="month-group" *ngFor="let mesGrupo of grupo.meses">
         <div class="month-title">
           <div class="dot" [ngClass]="grupo.anoAtual ? 'dot-secondary' : 'dot-archived'"></div>
-          <h4 [class.archived-text]="!grupo.anoAtual">{{ getNomeMes(lista.mes) }}</h4>
+          <h4 [class.archived-text]="!grupo.anoAtual">{{ getNomeMes(mesGrupo.mes) }}</h4>
         </div>
 
-        <div class="list-item" [class.archived-item]="!grupo.anoAtual">
-          <div class="item-icon"
-            [ngClass]="grupo.anoAtual ? 'bg-primary-light text-primary' : 'bg-gray text-gray'">
+        <div class="list-item" *ngFor="let lista of mesGrupo.listas" [class.archived-item]="!grupo.anoAtual">
+          <div class="item-icon" [ngClass]="grupo.anoAtual ? 'bg-primary-light text-primary' : 'bg-gray text-gray'">
             <i class="fas" [ngClass]="grupo.anoAtual ? 'fa-shopping-bag' : 'fa-box'"></i>
           </div>
           <div class="item-details">
-            <h5>Lista Mensal - {{ getNomeMes(lista.mes) }}</h5>
+            <h5>{{ lista.descricao || 'Lista Mensal' }}</h5>
             <p>{{ formatarData(lista.dataCriacao) }} • ID: {{ lista.idLista | slice:0:8 }}</p>
           </div>
           <div class="item-stats">
@@ -71,8 +66,7 @@
             </div>
             <div class="stat">
               <span>Status</span>
-              <div class="status-badge"
-                [ngClass]="grupo.anoAtual ? 'status-success' : 'status-archived'">
+              <div class="status-badge" [ngClass]="grupo.anoAtual ? 'status-success' : 'status-archived'">
                 {{ grupo.anoAtual ? 'Ativo' : 'Finalizado' }}
               </div>
             </div>
@@ -86,4 +80,37 @@
     </div>
   </details>
 
+</div>
+
+<!-- Modal: Nova Lista -->
+<div class="modal-overlay" *ngIf="showModal" (click)="fecharModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Nova Lista Mensal</h3>
+      <button class="close-btn" (click)="fecharModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p>Informe uma descrição para a nova lista de compras do mês.</p>
+      <div class="form-group">
+        <label for="descricao">Descrição</label>
+        <input
+          id="descricao"
+          type="text"
+          class="form-input"
+          placeholder="Ex: Compras Mensais - Supermercado"
+          [(ngModel)]="novaDescricao"
+          (keydown.enter)="confirmarNovaLista()"
+          [disabled]="criandoLista"
+          autofocus />
+      </div>
+      <p class="error-msg" *ngIf="erroModal">{{ erroModal }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="fecharModal()" [disabled]="criandoLista">Cancelar</button>
+      <button class="btn-primary" (click)="confirmarNovaLista()" [disabled]="criandoLista">
+        <i class="fas" [ngClass]="criandoLista ? 'fa-spinner fa-spin' : 'fa-plus'"></i>
+        {{ criandoLista ? 'Criando...' : 'Criar Lista' }}
+      </button>
+    </div>
+  </div>
 </div>

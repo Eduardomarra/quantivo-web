@@ -4,10 +4,15 @@ import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { ListaMensalTO } from 'src/app/core/models/lista.model';
 import { Router } from '@angular/router';
 
+interface ListasPorMes {
+  mes: number;
+  listas: ListaMensalTO[];
+}
+
 interface ListasPorAno {
   ano: number;
   anoAtual: boolean;
-  listas: ListaMensalTO[];
+  meses: ListasPorMes[];
 }
 
 @Component({
@@ -19,6 +24,12 @@ export class ListsComponent implements OnInit {
 
   listasAgrupadas: ListasPorAno[] = [];
   loading = true;
+
+  // Modal state
+  showModal = false;
+  novaDescricao = '';
+  criandoLista = false;
+  erroModal = '';
 
   private meses: string[] = [
     '', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -40,7 +51,7 @@ export class ListsComponent implements OnInit {
     if (user && user.id) {
       this.listaService.getListasPorUsuarioId(user.id).subscribe({
         next: (lists) => {
-          this.agruparPorAno(lists);
+          this.agruparPorAnoEMes(lists);
           this.loading = false;
         },
         error: (err) => {
@@ -54,25 +65,41 @@ export class ListsComponent implements OnInit {
     }
   }
 
-  agruparPorAno(listas: ListaMensalTO[]): void {
+  agruparPorAnoEMes(listas: ListaMensalTO[]): void {
     const anoAtual = new Date().getFullYear();
-    const grupos: { [ano: number]: ListaMensalTO[] } = {};
 
+    // Agrupar por ano
+    const gruposAno: { [ano: number]: ListaMensalTO[] } = {};
     listas.forEach(lista => {
-      if (!grupos[lista.ano]) {
-        grupos[lista.ano] = [];
+      if (!gruposAno[lista.ano]) {
+        gruposAno[lista.ano] = [];
       }
-      grupos[lista.ano].push(lista);
+      gruposAno[lista.ano].push(lista);
     });
 
-    this.listasAgrupadas = Object.keys(grupos)
+    // Para cada ano, agrupar por mês
+    this.listasAgrupadas = Object.keys(gruposAno)
       .map(Number)
       .sort((a, b) => b - a)
-      .map(ano => ({
-        ano,
-        anoAtual: ano === anoAtual,
-        listas: grupos[ano].sort((a, b) => a.mes - b.mes)
-      }));
+      .map(ano => {
+        const listasPorMes: { [mes: number]: ListaMensalTO[] } = {};
+        gruposAno[ano].forEach(lista => {
+          if (!listasPorMes[lista.mes]) {
+            listasPorMes[lista.mes] = [];
+          }
+          listasPorMes[lista.mes].push(lista);
+        });
+
+        const meses: ListasPorMes[] = Object.keys(listasPorMes)
+          .map(Number)
+          .sort((a, b) => a - b)
+          .map(mes => ({
+            mes,
+            listas: listasPorMes[mes]
+          }));
+
+        return { ano, anoAtual: ano === anoAtual, meses };
+      });
   }
 
   getNomeMes(mes: number): string {
@@ -88,5 +115,48 @@ export class ListsComponent implements OnInit {
 
   acessarLista(lista: ListaMensalTO): void {
     this.router.navigate(['/dashboard/listas', lista.idLista]);
+  }
+
+  // --- Modal: Nova Lista ---
+
+  novaLista(): void {
+    this.novaDescricao = '';
+    this.erroModal = '';
+    this.criandoLista = false;
+    this.showModal = true;
+  }
+
+  fecharModal(): void {
+    this.showModal = false;
+  }
+
+  confirmarNovaLista(): void {
+    const descricao = this.novaDescricao.trim();
+    if (!descricao) {
+      this.erroModal = 'A descrição é obrigatória.';
+      return;
+    }
+
+    const user = this.authService.getUser();
+    if (!user || !user.id) {
+      this.erroModal = 'Usuário não autenticado.';
+      return;
+    }
+
+    this.criandoLista = true;
+    this.erroModal = '';
+
+    this.listaService.criarLista({ usuarioId: user.id, descricao }).subscribe({
+      next: () => {
+        this.showModal = false;
+        this.criandoLista = false;
+        this.loadLists();
+      },
+      error: (err) => {
+        console.error('Erro ao criar lista:', err);
+        this.erroModal = 'Erro ao criar lista. Tente novamente.';
+        this.criandoLista = false;
+      }
+    });
   }
 }
