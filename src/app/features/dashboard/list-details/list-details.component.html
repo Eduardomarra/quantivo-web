@@ -1,119 +1,135 @@
-<section class="content-header">
-  <div class="titles">
-    <span class="subtitle">Shopping Lists > Monthly Logs</span>
-    <h3>Janeiro 2024</h3>
-    <p class="desc">Detailed inventory and expenditure analysis for the current cycle.</p>
-  </div>
-  <div class="actions">
-    <button class="btn-primary">
-      <i class="fas fa-plus"></i> Adicionar Item
-    </button>
-  </div>
-</section>
+<div *ngIf="loading" class="loading-state" style="margin-top: 50px;">
+  <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: #cbd5e1;"></i>
+  <p style="color: #94a3b8; margin-top: 15px; font-weight: 500;">Carregando detalhes da lista...</p>
+</div>
 
-<div class="list-details-container">
-  
-  <section class="summary-cards">
-    <div class="dashboard-card">
-      <div class="card-content">
-        <p class="card-label">Total de Itens</p>
-        <div class="card-value-row">
-          <span class="value">15</span>
-          <span class="unit">Unidades</span>
-        </div>
-      </div>
-      <i class="fas fa-box card-bg-icon"></i>
+<ng-container *ngIf="!loading && lista">
+  <section class="content-header">
+    <div class="titles">
+      <span class="subtitle"><a routerLink="/dashboard/listas" style="color: inherit; text-decoration: none;">Listas de
+          Compras</a> > Detalhes</span>
+      <h3>{{ lista.descricao || 'Lista Mensal' }}</h3>
+      <p class="desc">{{ getNomeMes(lista.mes) }} de {{ lista.ano }}</p>
     </div>
-
-    <div class="dashboard-card">
-      <div class="card-content">
-        <p class="card-label">Valor Total</p>
-        <div class="card-value-row">
-          <span class="value">R$ 450,00</span>
-          <span class="trend trend-up"><i class="fas fa-arrow-up"></i> 4.2%</span>
-        </div>
-      </div>
-      <i class="fas fa-money-bill-wave card-bg-icon"></i>
+    <div class="actions">
+      <button class="btn-primary" (click)="abrirModal()">
+        <i class="fas fa-plus"></i> Adicionar Item
+      </button>
     </div>
   </section>
 
-  <section class="items-table-section">
-    <div class="table-header">
-      <h4>Lista de Produtos</h4>
-      <div class="table-actions">
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Filtrar itens...">
-        </div>
-        <button class="btn-icon"><i class="fas fa-filter"></i></button>
-      </div>
-    </div>
-    
-    <div class="table-responsive">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Produto</th>
-            <th class="text-right">Quantidade</th>
-            <th class="text-right">Valor Unitário</th>
-            <th class="text-right">Valor Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <div class="product-cell">
-                <div class="icon-box bg-primary-light text-primary"><i class="fas fa-shopping-bag"></i></div>
-                <span class="product-name">Arroz 5kg</span>
-              </div>
-            </td>
-            <td class="text-right mono-font font-medium">2</td>
-            <td class="text-right mono-font text-muted">R$ 25,00</td>
-            <td class="text-right mono-font font-bold">R$ 50,00</td>
-          </tr>
-          <tr>
-            <td>
-              <div class="product-cell">
-                <div class="icon-box bg-secondary-light text-secondary"><i class="fas fa-leaf"></i></div>
-                <span class="product-name">Feijão Preto</span>
-              </div>
-            </td>
-            <td class="text-right mono-font font-medium">3</td>
-            <td class="text-right mono-font text-muted">R$ 8,50</td>
-            <td class="text-right mono-font font-bold">R$ 25,50</td>
-          </tr>
-          <tr>
-            <td>
-              <div class="product-cell">
-                <div class="icon-box bg-primary-light text-primary"><i class="fas fa-tint"></i></div>
-                <span class="product-name">Leite Integral</span>
-              </div>
-            </td>
-            <td class="text-right mono-font font-medium">12</td>
-            <td class="text-right mono-font text-muted">R$ 4,20</td>
-            <td class="text-right mono-font font-bold">R$ 50,40</td>
-          </tr>
-          <tr>
-            <td>
-              <div class="product-cell">
-                <div class="icon-box bg-tertiary-light text-tertiary"><i class="fas fa-egg"></i></div>
-                <span class="product-name">Ovos Brancos (30 un)</span>
-              </div>
-            </td>
-            <td class="text-right mono-font font-medium">2</td>
-            <td class="text-right mono-font text-muted">R$ 18,00</td>
-            <td class="text-right mono-font font-bold">R$ 36,00</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="list-details-container">
 
-    <div class="table-footer">
-      <p>Exibindo 4 de 15 itens cadastrados</p>
-      <div class="pagination">
-        <button><i class="fas fa-chevron-left"></i></button>
-        <button><i class="fas fa-chevron-right"></i></button>
+    <section class="summary-cards">
+      <div class="dashboard-card">
+        <div class="card-content">
+          <p class="card-label">Total de Itens</p>
+          <div class="card-value-row">
+            <span class="value">{{ totalItens || 0 }}</span>
+            <span class="unit">Unidades</span>
+          </div>
+        </div>
+        <i class="fas fa-box card-bg-icon"></i>
       </div>
+
+      <div class="dashboard-card">
+        <div class="card-content">
+          <p class="card-label">Valor Total</p>
+          <div class="card-value-row">
+            <span class="value">{{ (valorTotal || 0) | currency:'BRL':'symbol':'1.2-2' }}</span>
+          </div>
+        </div>
+        <i class="fas fa-money-bill-wave card-bg-icon"></i>
+      </div>
+    </section>
+
+    <section class="items-table-section">
+      <div class="table-header">
+        <h4>Lista de Produtos</h4>
+        <div class="table-actions">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Filtrar itens...">
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th class="text-right">Quantidade</th>
+              <th class="text-right">Valor Unitário</th>
+              <th class="text-right">Valor Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="!lista.itens || lista.itens.length === 0">
+              <td colspan="4" style="text-align: center; padding: 40px; color: #94a3b8;">
+                <i class="fas fa-box-open" style="font-size: 30px; margin-bottom: 10px; opacity: 0.5;"></i>
+                <p style="margin: 0;">Nenhum item cadastrado nesta lista.</p>
+              </td>
+            </tr>
+            <tr *ngFor="let item of lista.itens">
+              <td>
+                <div class="product-cell">
+                  <div class="icon-box bg-primary-light text-primary"><i class="fas fa-shopping-bag"></i></div>
+                  <span class="product-name">{{ item.nomeProduto }}</span>
+                </div>
+              </td>
+              <td class="text-right mono-font font-medium">{{ item.quantidade }}</td>
+              <td class="text-right mono-font text-muted">{{ item.valorUnitario | currency:'BRL':'symbol':'1.2-2' }}
+              </td>
+              <td class="text-right mono-font font-bold">{{ item.valorTotal | currency:'BRL':'symbol':'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <p>Exibindo {{ lista.itens?.length || 0 }} itens cadastrados</p>
+      </div>
+    </section>
+  </div>
+</ng-container>
+
+<!-- Modal: Adicionar Item -->
+<div class="modal-overlay" *ngIf="showModal" (click)="fecharModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Adicionar Produto</h3>
+      <button class="close-btn" (click)="fecharModal()"><i class="fas fa-times"></i></button>
     </div>
-  </section>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="nomeProduto">Nome do Produto</label>
+        <input id="nomeProduto" type="text" class="form-input" placeholder="Ex: Leite Integral Piracanjuba"
+          [(ngModel)]="novoItemNome" [disabled]="adicionandoItem" autofocus />
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+        <div class="form-group">
+          <label for="quantidade">Quantidade</label>
+          <input id="quantidade" type="number" class="form-input" [(ngModel)]="novoItemQtde"
+            [disabled]="adicionandoItem" min="1" />
+        </div>
+
+        <div class="form-group">
+          <label for="valorUnitario">Valor Unitário (R$)</label>
+          <input id="valorUnitario" type="number" class="form-input" [(ngModel)]="novoItemValor"
+            (keydown.enter)="adicionarItem()" [disabled]="adicionandoItem" min="0.01" step="0.01" />
+        </div>
+      </div>
+
+      <p class="error-msg" *ngIf="erroModal">{{ erroModal }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="fecharModal()" [disabled]="adicionandoItem">Cancelar</button>
+      <button class="btn-primary" (click)="adicionarItem()" [disabled]="adicionandoItem">
+        <i class="fas" [ngClass]="adicionandoItem ? 'fa-spinner fa-spin' : 'fa-plus'"></i>
+        {{ adicionandoItem ? 'Adicionando...' : 'Adicionar' }}
+      </button>
+    </div>
+  </div>
 </div>

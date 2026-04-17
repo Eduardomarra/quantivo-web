@@ -1,6 +1,6 @@
 export interface ItemListaTO {
   id?: string;
-  produto: string;
+  nomeProduto: string;
   quantidade: number;
   valorUnitario: number;
   valorTotal?: number;
@@ -25,13 +25,13 @@ export interface CriarListaMensalTO {
 }
 
 export interface AdicionarItemTO {
-  produto: string;
+  nomeProduto: string;
   quantidade: number;
   valorUnitario: number;
 }
 
 export interface AlterarItemTO {
-  produto: string;
+  nomeProduto: string;
   quantidade: number;
   valorUnitario: number;
 }

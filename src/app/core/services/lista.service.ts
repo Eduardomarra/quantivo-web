@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { 
-  ListaMensalTO, 
-  CriarListaMensalTO, 
-  AdicionarItemTO, 
-  AlterarItemTO, 
-  ItemListaTO, 
-  ResumoListaTO 
+import {
+  ListaMensalTO,
+  CriarListaMensalTO,
+  AdicionarItemTO,
+  AlterarItemTO,
+  ItemListaTO,
+  ResumoListaTO
 } from '../models/lista.model';
 
 @Injectable({
@@ -16,6 +16,7 @@ import {
 })
 export class ListaService {
   private apiUrl = `${environment.apiUrl}lista-mensal`;
+  private apiUrlItem = `${environment.apiUrl}item-lista`;
 
   /** Cache interno das listas do usuário */
   private listasCache: ListaMensalTO[] | null = null;
@@ -67,6 +68,14 @@ export class ListaService {
     return this.http.delete<void>(`${this.apiUrl}/deletar/${id}`).pipe(
       tap(() => this.invalidarCache())
     );
+  }
+
+  /**
+   * [GET] /item-lista/itens/{idLista}
+   * Busca todos os itens de uma lista específica pelo ID da lista.
+   */
+  getItem(idLista: string): Observable<ItemListaTO[]> {
+    return this.http.get<ItemListaTO[]>(`${this.apiUrlItem}/itens/${idLista}`);
   }
 
   /**
