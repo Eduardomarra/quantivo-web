@@ -21,3 +21,27 @@ body {
 .bg-brand-gradient {
   background: linear-gradient(135deg, #3953bd 0%, #754aa1 100%);
 }
+
+/* Celular (padrão) */
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .container { width: 750px; }
+}
+
+/* Desktop pequeno */
+@media (min-width: 992px) {
+  .container { width: 970px; }
+}
+
+/* Desktop médio/grande */
+@media (min-width: 1200px) {
+  .container { width: 1170px; }
+}

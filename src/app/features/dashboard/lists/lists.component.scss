@@ -489,3 +489,87 @@
     transform: scale(1) translateY(0);
   }
 }
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 992px) {
+  .lists-container {
+    .list-accordion {
+      .accordion-body {
+        .month-group {
+          .list-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+
+            .item-icon {
+              margin-bottom: 10px;
+            }
+
+            .item-stats {
+              width: 100%;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 15px;
+              margin-right: 0;
+              text-align: left;
+            }
+
+            .access-btn {
+              width: 100%;
+              text-align: center;
+              margin-top: 10px;
+            }
+
+            div[style*="display: flex"] {
+              width: 100%;
+              justify-content: space-between;
+              flex-wrap: wrap;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .lists-container {
+    .list-accordion {
+      summary {
+        padding: 15px;
+
+        .accordion-head {
+          h3 {
+            font-size: 18px;
+          }
+        }
+      }
+
+      .accordion-body {
+        padding: 0 15px 15px 15px;
+
+        .month-group {
+          .list-item {
+            padding: 15px;
+
+            .item-stats {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .modal-content {
+    padding: 20px;
+    margin: 15px;
+    width: auto;
+    max-width: 90%;
+
+    .modal-header {
+      h3 {
+        font-size: 18px;
+      }
+    }
+  }
+}
