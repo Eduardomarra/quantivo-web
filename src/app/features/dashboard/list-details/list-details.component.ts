@@ -24,11 +24,21 @@ export class ListDetailsComponent implements OnInit {
   itemEditandoId: string | null = null;
   totalItens: number = 0;
   valorTotal: number = 0;
+  searchTerm: string = '';
 
   // Modal Confirmar Exclusão State
   showConfirmDelete = false;
   itemParaDeletar: ItemListaTO | null = null;
   deletandoItem = false;
+
+  get itensFiltrados(): ItemListaTO[] {
+    if (!this.lista?.itens) return [];
+    if (!this.searchTerm.trim()) return this.lista.itens;
+    const termo = this.searchTerm.toLowerCase().trim();
+    return this.lista.itens.filter(item =>
+      item.nomeProduto.toLowerCase().includes(termo)
+    );
+  }
 
   private meses: string[] = [
     '', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
