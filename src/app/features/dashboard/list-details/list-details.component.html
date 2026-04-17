@@ -82,6 +82,14 @@
               <td class="text-right mono-font text-muted">{{ item.valorUnitario | currency:'BRL':'symbol':'1.2-2' }}
               </td>
               <td class="text-right mono-font font-bold">{{ item.valorTotal | currency:'BRL':'symbol':'1.2-2' }}</td>
+              <td class="text-right">
+                <button class="btn-icon" (click)="abrirModal(item)" title="Editar" style="background: none; border: none; color: #64748b; cursor: pointer; padding: 5px 8px; font-size: 14px;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon" (click)="confirmarExclusaoItem(item)" title="Excluir" style="background: none; border: none; color: #e53e3e; cursor: pointer; padding: 5px 8px; font-size: 14px;">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -94,11 +102,11 @@
   </div>
 </ng-container>
 
-<!-- Modal: Adicionar Item -->
+<!-- Modal: Adicionar / Editar Item -->
 <div class="modal-overlay" *ngIf="showModal" (click)="fecharModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>Adicionar Produto</h3>
+      <h3>{{ itemEditandoId ? 'Editar Produto' : 'Adicionar Produto' }}</h3>
       <button class="close-btn" (click)="fecharModal()"><i class="fas fa-times"></i></button>
     </div>
     <div class="modal-body">
@@ -118,7 +126,7 @@
         <div class="form-group">
           <label for="valorUnitario">Valor Unitário (R$)</label>
           <input id="valorUnitario" type="number" class="form-input" [(ngModel)]="novoItemValor"
-            (keydown.enter)="adicionarItem()" [disabled]="adicionandoItem" min="0.01" step="0.01" />
+            (keydown.enter)="salvarItem()" [disabled]="adicionandoItem" min="0.01" step="0.01" />
         </div>
       </div>
 
@@ -126,9 +134,30 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" (click)="fecharModal()" [disabled]="adicionandoItem">Cancelar</button>
-      <button class="btn-primary" (click)="adicionarItem()" [disabled]="adicionandoItem">
-        <i class="fas" [ngClass]="adicionandoItem ? 'fa-spinner fa-spin' : 'fa-plus'"></i>
-        {{ adicionandoItem ? 'Adicionando...' : 'Adicionar' }}
+      <button class="btn-primary" (click)="salvarItem()" [disabled]="adicionandoItem">
+        <i class="fas" [ngClass]="adicionandoItem ? 'fa-spinner fa-spin' : (itemEditandoId ? 'fa-save' : 'fa-plus')"></i>
+        {{ adicionandoItem ? 'Salvando...' : (itemEditandoId ? 'Salvar' : 'Adicionar') }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmar Exclusão de Item -->
+<div class="modal-overlay" *ngIf="showConfirmDelete" (click)="fecharConfirmDelete()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Excluir Item</h3>
+      <button class="close-btn" (click)="fecharConfirmDelete()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="color: #333; margin-bottom: 20px;">Tem certeza que deseja excluir o item <strong>{{ itemParaDeletar?.nomeProduto }}</strong>?</p>
+      <p style="color: #e53e3e; font-size: 13px; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Esta ação não pode ser desfeita.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="fecharConfirmDelete()" [disabled]="deletandoItem">Cancelar</button>
+      <button class="btn-primary" (click)="deletarItem()" [disabled]="deletandoItem" style="background-color: #e53e3e; border-color: #e53e3e;">
+        <i class="fas" [ngClass]="deletandoItem ? 'fa-spinner fa-spin' : 'fa-trash-alt'"></i>
+        {{ deletandoItem ? 'Excluindo...' : 'Sim, Excluir' }}
       </button>
     </div>
   </div>

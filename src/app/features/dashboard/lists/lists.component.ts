@@ -25,11 +25,21 @@ export class ListsComponent implements OnInit {
   listasAgrupadas: ListasPorAno[] = [];
   loading = true;
 
+  //ResumoLista
+  totalItens: number = 0;
+  valorTotal: number = 0;
+
   // Modal state
   showModal = false;
   novaDescricao = '';
-  criandoLista = false;
+  salvandoLista = false;
   erroModal = '';
+  listaEditandoId: string | null = null;
+
+  // Delete Confirm State
+  showConfirmDelete = false;
+  listaParaDeletar: ListaMensalTO | null = null;
+  deletandoLista = false;
 
   private meses: string[] = [
     '', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -47,12 +57,42 @@ export class ListsComponent implements OnInit {
   }
 
   loadLists() {
+    this.loading = true;
     const user = this.authService.getUser();
     if (user && user.id) {
-      this.listaService.getListasPorUsuarioId(user.id).subscribe({
+      this.listaService.getListasPorUsuarioId(user.id, true).subscribe({
         next: (lists) => {
-          this.agruparPorAnoEMes(lists);
-          this.loading = false;
+          if (lists.length === 0) {
+            this.agruparPorAnoEMes([]);
+            this.loading = false;
+            return;
+          }
+
+          let concluidos = 0;
+          lists.forEach(lista => {
+            if (lista.idLista) {
+              this.listaService.getResumoLista(lista.idLista).subscribe({
+                next: (resumo) => {
+                  lista.totalItens = resumo.totalItens;
+                  lista.valorTotal = resumo.valorTotal;
+                },
+                error: (err) => console.error('Erro ao buscar resumo da lista', lista.idLista, err),
+                complete: () => {
+                  concluidos++;
+                  if (concluidos === lists.length) {
+                    this.agruparPorAnoEMes(lists);
+                    this.loading = false;
+                  }
+                }
+              });
+            } else {
+              concluidos++;
+              if (concluidos === lists.length) {
+                this.agruparPorAnoEMes(lists);
+                this.loading = false;
+              }
+            }
+          });
         },
         error: (err) => {
           console.error('Erro ao carregar listas:', err);
@@ -117,12 +157,22 @@ export class ListsComponent implements OnInit {
     this.router.navigate(['/dashboard/listas', lista.idLista]);
   }
 
-  // --- Modal: Nova Lista ---
+  // --- Modal: Nova / Editar Lista ---
 
   novaLista(): void {
+    this.listaEditandoId = null;
     this.novaDescricao = '';
     this.erroModal = '';
-    this.criandoLista = false;
+    this.salvandoLista = false;
+    this.showModal = true;
+  }
+
+  editarLista(lista: ListaMensalTO, event: Event): void {
+    event.stopPropagation();
+    this.listaEditandoId = lista.idLista || null;
+    this.novaDescricao = lista.descricao;
+    this.erroModal = '';
+    this.salvandoLista = false;
     this.showModal = true;
   }
 
@@ -130,7 +180,7 @@ export class ListsComponent implements OnInit {
     this.showModal = false;
   }
 
-  confirmarNovaLista(): void {
+  salvarLista(): void {
     const descricao = this.novaDescricao.trim();
     if (!descricao) {
       this.erroModal = 'A descrição é obrigatória.';
@@ -143,19 +193,64 @@ export class ListsComponent implements OnInit {
       return;
     }
 
-    this.criandoLista = true;
+    this.salvandoLista = true;
     this.erroModal = '';
 
-    this.listaService.criarLista({ usuarioId: user.id, descricao }).subscribe({
+    if (this.listaEditandoId) {
+      this.listaService.editarLista(descricao, this.listaEditandoId).subscribe({
+        next: () => {
+          this.showModal = false;
+          this.salvandoLista = false;
+          this.loadLists();
+        },
+        error: (err) => {
+          console.error('Erro ao editar lista:', err);
+          this.erroModal = 'Erro ao editar lista. Tente novamente.';
+          this.salvandoLista = false;
+        }
+      });
+    } else {
+      this.listaService.criarLista({ usuarioId: user.id, descricao }).subscribe({
+        next: () => {
+          this.showModal = false;
+          this.salvandoLista = false;
+          this.loadLists();
+        },
+        error: (err) => {
+          console.error('Erro ao criar lista:', err);
+          this.erroModal = 'Erro ao criar lista. Tente novamente.';
+          this.salvandoLista = false;
+        }
+      });
+    }
+  }
+
+  // --- Deletar Lista ---
+  confirmarExclusaoLista(lista: ListaMensalTO, event: Event): void {
+    event.stopPropagation();
+    this.listaParaDeletar = lista;
+    this.showConfirmDelete = true;
+  }
+
+  fecharConfirmDelete(): void {
+    this.showConfirmDelete = false;
+    this.listaParaDeletar = null;
+  }
+
+  deletarLista(): void {
+    if (!this.listaParaDeletar || !this.listaParaDeletar.idLista) return;
+
+    this.deletandoLista = true;
+    this.listaService.deletarLista(this.listaParaDeletar.idLista).subscribe({
       next: () => {
-        this.showModal = false;
-        this.criandoLista = false;
+        this.deletandoLista = false;
+        this.fecharConfirmDelete();
         this.loadLists();
       },
       error: (err) => {
-        console.error('Erro ao criar lista:', err);
-        this.erroModal = 'Erro ao criar lista. Tente novamente.';
-        this.criandoLista = false;
+        console.error('Erro ao deletar lista:', err);
+        this.deletandoLista = false;
+        this.fecharConfirmDelete();
       }
     });
   }

@@ -71,6 +71,16 @@ export class ListaService {
   }
 
   /**
+   * [PUT] /lista-mensal/editar/{id}
+   * Edita a descrição de uma lista mensal.
+   */
+  editarLista(descricao: string, idLista: string): Observable<ListaMensalTO> {
+    return this.http.put<ListaMensalTO>(`${this.apiUrl}/editar-lista/${idLista}`, descricao).pipe(
+      tap(() => this.invalidarCache())
+    );
+  }
+
+  /**
    * [GET] /item-lista/itens/{idLista}
    * Busca todos os itens de uma lista específica pelo ID da lista.
    */

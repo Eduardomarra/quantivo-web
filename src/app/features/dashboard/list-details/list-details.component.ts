@@ -21,8 +21,14 @@ export class ListDetailsComponent implements OnInit {
   novoItemValor: number = 0;
   adicionandoItem = false;
   erroModal = '';
+  itemEditandoId: string | null = null;
   totalItens: number = 0;
   valorTotal: number = 0;
+
+  // Modal Confirmar Exclusão State
+  showConfirmDelete = false;
+  itemParaDeletar: ItemListaTO | null = null;
+  deletandoItem = false;
 
   private meses: string[] = [
     '', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -70,12 +76,20 @@ export class ListDetailsComponent implements OnInit {
     return this.meses[mes] || '';
   }
 
-  // --- Modal: Adicionar Item ---
+  // --- Modal: Adicionar / Editar Item ---
 
-  abrirModal(): void {
-    this.novoItemNome = '';
-    this.novoItemQtde = 1;
-    this.novoItemValor = 0;
+  abrirModal(item?: ItemListaTO): void {
+    if (item) {
+      this.itemEditandoId = item.id || null;
+      this.novoItemNome = item.nomeProduto;
+      this.novoItemQtde = item.quantidade;
+      this.novoItemValor = item.valorUnitario;
+    } else {
+      this.itemEditandoId = null;
+      this.novoItemNome = '';
+      this.novoItemQtde = 1;
+      this.novoItemValor = 0;
+    }
     this.erroModal = '';
     this.adicionandoItem = false;
     this.showModal = true;
@@ -85,7 +99,7 @@ export class ListDetailsComponent implements OnInit {
     this.showModal = false;
   }
 
-  adicionarItem(): void {
+  salvarItem(): void {
     if (!this.lista || !this.lista.idLista) return;
 
     if (!this.novoItemNome.trim()) {
@@ -106,27 +120,73 @@ export class ListDetailsComponent implements OnInit {
     this.adicionandoItem = true;
     this.erroModal = '';
 
-    const novoItem = {
+    const payload = {
       nomeProduto: this.novoItemNome,
       quantidade: this.novoItemQtde,
       valorUnitario: this.novoItemValor
     };
 
-    this.listaService.adicionarItem(this.lista.idLista, novoItem).subscribe({
-      next: (itemAdicionado) => {
-        this.adicionandoItem = false;
-        this.showModal = false;
-        // Recarregar a lista para atualizar os totais
+    if (this.itemEditandoId) {
+      this.listaService.alterarItem(this.itemEditandoId, payload).subscribe({
+        next: () => {
+          this.adicionandoItem = false;
+          this.showModal = false;
+          if (this.lista?.idLista) {
+            this.carregarLista(this.lista.idLista);
+          }
+        },
+        error: (err) => {
+          console.error('Erro ao editar item:', err);
+          this.erroModal = 'Erro ao editar item. Tente novamente.';
+          this.adicionandoItem = false;
+        }
+      });
+    } else {
+      this.listaService.adicionarItem(this.lista.idLista, payload).subscribe({
+        next: () => {
+          this.adicionandoItem = false;
+          this.showModal = false;
+          if (this.lista?.idLista) {
+            this.carregarLista(this.lista.idLista);
+          }
+        },
+        error: (err) => {
+          console.error('Erro ao adicionar item:', err);
+          this.erroModal = 'Erro ao adicionar item. Tente novamente.';
+          this.adicionandoItem = false;
+        }
+      });
+    }
+  }
+
+  // --- Deletar Item ---
+  confirmarExclusaoItem(item: ItemListaTO): void {
+    this.itemParaDeletar = item;
+    this.showConfirmDelete = true;
+  }
+
+  fecharConfirmDelete(): void {
+    this.showConfirmDelete = false;
+    this.itemParaDeletar = null;
+  }
+
+  deletarItem(): void {
+    if (!this.itemParaDeletar || !this.itemParaDeletar.id) return;
+
+    this.deletandoItem = true;
+    this.listaService.deletarItem(this.itemParaDeletar.id).subscribe({
+      next: () => {
+        this.deletandoItem = false;
+        this.fecharConfirmDelete();
         if (this.lista?.idLista) {
           this.carregarLista(this.lista.idLista);
         }
       },
       error: (err) => {
-        console.error('Erro ao adicionar item:', err);
-        this.erroModal = 'Erro ao adicionar item. Tente novamente.';
-        this.adicionandoItem = false;
+        console.error('Erro ao deletar item:', err);
+        this.deletandoItem = false;
+        this.fecharConfirmDelete();
       }
     });
   }
-
 }

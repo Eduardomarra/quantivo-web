@@ -65,15 +65,27 @@
               <p>{{ lista.ano }}</p>
             </div>
             <div class="stat">
-              <span>Status</span>
-              <div class="status-badge" [ngClass]="grupo.anoAtual ? 'status-success' : 'status-archived'">
-                {{ grupo.anoAtual ? 'Ativo' : 'Finalizado' }}
-              </div>
+              <span>Itens</span>
+              <p>{{ lista.totalItens }}</p>
+            </div>
+            <div class="stat">
+              <span>Total</span>
+              <p>{{ lista.valorTotal | currency:'BRL':'symbol':'1.2-2' }}</p>
             </div>
           </div>
-          <button class="btn-outline access-btn" (click)="acessarLista(lista)">
-            {{ grupo.anoAtual ? 'Acessar' : 'Ver' }}
-          </button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-icon" (click)="editarLista(lista, $event)" title="Editar"
+              style="background: none; border: none; color: #64748b; cursor: pointer; padding: 8px; font-size: 16px;">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-icon" (click)="confirmarExclusaoLista(lista, $event)" title="Excluir"
+              style="background: none; border: none; color: #e53e3e; cursor: pointer; padding: 8px; font-size: 16px;">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+            <button class="btn-outline access-btn" (click)="acessarLista(lista)">
+              {{ grupo.anoAtual ? 'Acessar' : 'Ver' }}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -82,34 +94,51 @@
 
 </div>
 
-<!-- Modal: Nova Lista -->
+<!-- Modal: Nova / Editar Lista -->
 <div class="modal-overlay" *ngIf="showModal" (click)="fecharModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>Nova Lista Mensal</h3>
+      <h3>{{ listaEditandoId ? 'Editar Lista Mensal' : 'Nova Lista Mensal' }}</h3>
       <button class="close-btn" (click)="fecharModal()"><i class="fas fa-times"></i></button>
     </div>
     <div class="modal-body">
-      <p>Informe uma descrição para a nova lista de compras do mês.</p>
+      <p *ngIf="!listaEditandoId">Informe uma descrição para a nova lista de compras do mês.</p>
       <div class="form-group">
         <label for="descricao">Descrição</label>
-        <input
-          id="descricao"
-          type="text"
-          class="form-input"
-          placeholder="Ex: Compras Mensais - Supermercado"
-          [(ngModel)]="novaDescricao"
-          (keydown.enter)="confirmarNovaLista()"
-          [disabled]="criandoLista"
-          autofocus />
+        <input id="descricao" type="text" class="form-input" placeholder="Ex: Compras Mensais - Supermercado"
+          [(ngModel)]="novaDescricao" (keydown.enter)="salvarLista()" [disabled]="salvandoLista" autofocus />
       </div>
       <p class="error-msg" *ngIf="erroModal">{{ erroModal }}</p>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" (click)="fecharModal()" [disabled]="criandoLista">Cancelar</button>
-      <button class="btn-primary" (click)="confirmarNovaLista()" [disabled]="criandoLista">
-        <i class="fas" [ngClass]="criandoLista ? 'fa-spinner fa-spin' : 'fa-plus'"></i>
-        {{ criandoLista ? 'Criando...' : 'Criar Lista' }}
+      <button class="btn-cancel" (click)="fecharModal()" [disabled]="salvandoLista">Cancelar</button>
+      <button class="btn-primary" (click)="salvarLista()" [disabled]="salvandoLista">
+        <i class="fas" [ngClass]="salvandoLista ? 'fa-spinner fa-spin' : (listaEditandoId ? 'fa-save' : 'fa-plus')"></i>
+        {{ salvandoLista ? 'Salvando...' : (listaEditandoId ? 'Salvar' : 'Criar Lista') }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmar Exclusão da Lista -->
+<div class="modal-overlay" *ngIf="showConfirmDelete" (click)="fecharConfirmDelete()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Excluir Lista</h3>
+      <button class="close-btn" (click)="fecharConfirmDelete()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="color: #333; margin-bottom: 20px;">Tem certeza que deseja excluir a lista <strong>{{
+          listaParaDeletar?.descricao || 'Mensal' }}</strong>?</p>
+      <p style="color: #e53e3e; font-size: 13px; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Esta
+        ação não pode ser desfeita.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="fecharConfirmDelete()" [disabled]="deletandoLista">Cancelar</button>
+      <button class="btn-primary" (click)="deletarLista()" [disabled]="deletandoLista"
+        style="background-color: #e53e3e; border-color: #e53e3e;">
+        <i class="fas" [ngClass]="deletandoLista ? 'fa-spinner fa-spin' : 'fa-trash-alt'"></i>
+        {{ deletandoLista ? 'Excluindo...' : 'Sim, Excluir' }}
       </button>
     </div>
   </div>

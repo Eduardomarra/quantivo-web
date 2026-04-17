@@ -99,9 +99,17 @@
             height: 8px;
             border-radius: 50%;
 
-            &.dot-primary { background-color: #667eea; }
-            &.dot-secondary { background-color: #764ba2; }
-            &.dot-archived { background-color: #cbd5e1; }
+            &.dot-primary {
+              background-color: #667eea;
+            }
+
+            &.dot-secondary {
+              background-color: #764ba2;
+            }
+
+            &.dot-archived {
+              background-color: #cbd5e1;
+            }
           }
 
           h4 {
@@ -162,11 +170,21 @@
             font-size: 20px;
             margin-right: 20px;
 
-            &.bg-primary-light { background-color: rgba(102, 126, 234, 0.1); }
-            &.text-primary { color: #667eea; }
-            
-            &.bg-gray { background-color: #e2e8f0; }
-            &.text-gray { color: #64748b; }
+            &.bg-primary-light {
+              background-color: rgba(102, 126, 234, 0.1);
+            }
+
+            &.text-primary {
+              color: #667eea;
+            }
+
+            &.bg-gray {
+              background-color: #e2e8f0;
+            }
+
+            &.text-gray {
+              color: #64748b;
+            }
           }
 
           .item-details {
@@ -189,7 +207,7 @@
 
           .item-stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 40px;
             margin-right: 40px;
             text-align: right;
@@ -219,7 +237,7 @@
                 border-radius: 20px;
                 font-size: 11px;
                 font-weight: 600;
-                
+
                 &.status-success {
                   background-color: #ecfdf5;
                   color: #059669;
@@ -244,7 +262,7 @@
             padding: 10px 20px;
             border-radius: 8px;
             font-size: 13px;
-            
+
             &.disabled {
               background-color: #f1f5f9;
               color: #94a3b8;
@@ -269,7 +287,7 @@
           display: inline-flex;
           align-items: center;
           gap: 5px;
-          
+
           &:hover {
             text-decoration: underline;
           }
@@ -279,7 +297,8 @@
   }
 }
 
-.loading-state, .empty-state {
+.loading-state,
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -450,8 +469,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleUp {
@@ -459,6 +483,7 @@
     opacity: 0;
     transform: scale(0.95) translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
